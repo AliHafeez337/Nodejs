@@ -5,15 +5,30 @@ const requestHandler = (req, res) => {
   const method = req.method;
   if (url === '/') {
     res.write('<html>');
-    res.write('<head><title>Enter Message</title></head>');
+    res.write('<head><title>Welcome</title></head>');
+    res.write('<body><h1>Welcome to my Server!</h1>');
     res.write(
-      '<body><form action="/message" method="POST"><input type="text" name="message"><button type="submit">Send</button></form></body>'
+      '<form action="/create-user" method="POST"><input type="text" name="username"><button type="submit">Send</button></form></body>'
     );
     res.write('</html>');
     return res.end();
   }
   
-  if (url === '/message' && method === 'POST') {
+  if (url === '/users') {
+    res.write('<html>');
+    res.write('<head><title>User\'s List</title></head>');
+    res.write('<body>');
+    res.write('<ul>');
+    res.write('<li>Ali</li>');
+    res.write('<li>Bilal</li>');
+    res.write('<li>Daud</li>');
+    res.write('</ul>');
+    res.write('</body>');
+    res.write('</html>');
+    return res.end();
+  }
+  
+  if (url === '/create-user' && method === 'POST') {
     const body = [];
     req.on('data', chunk => {
       console.log(chunk);
@@ -23,8 +38,9 @@ const requestHandler = (req, res) => {
       const parsedBody = Buffer.concat(body).toString();
       const message = parsedBody.split('=')[1];
       fs.writeFile('message.txt', message, err => {
+        console.log('Final message is: ' + message);
         res.statusCode = 302;
-        res.setHeader('Location', '/');
+        res.setHeader('Location', '/users');
         return res.end();
       });
     });
