@@ -1,36 +1,21 @@
-const http = require('http');
+const path = require('path');
 
 const express = require('express');
+const bodyParser = require('body-parser');
 
 const app = express();
 
-// app.use('/', (req, res, next) => {
-//   console.log('/ active');
-//   next();
-// })
+const userRoutes = require('./routes/users');
+const indexRoutes = require('./routes/index');
 
-// app.use('/', (req, res) => {
-//   res.send('this is express');
-// })
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/users', (req, res) => {
-  res.send(`
-    <html>
-      <ul>
-        <li>Ali</li>
-        <li>Bilal</li>
-        <li>Daud</li>
-      </ul>
-    </html>
-  `);
-})
+app.use('/users', userRoutes);
+app.use(indexRoutes);
 
-app.use('/', (req, res) => {
-  res.send(`
-    <html>
-      <h1>Welcome to the best app in the world.</h1>
-    </html>
-  `);
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, 'views', 'notFound.html'));
 })
 
 app.listen(3000);
